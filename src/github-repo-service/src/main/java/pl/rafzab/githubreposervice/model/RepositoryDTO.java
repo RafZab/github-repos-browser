@@ -1,8 +1,8 @@
-package pl.rafzab.githubreposervice.model.dto;
+package pl.rafzab.githubreposervice.model;
 
 import lombok.Getter;
-import pl.rafzab.githubreposervice.model.github.Branch;
-import pl.rafzab.githubreposervice.model.github.Repository;
+import pl.rafzab.githubreposervice.client.git.github.model.Branch;
+import pl.rafzab.githubreposervice.client.git.github.model.Repository;
 
 import java.util.Arrays;
 import java.util.Collection;

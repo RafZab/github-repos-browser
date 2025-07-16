@@ -1,4 +1,4 @@
-package pl.rafzab.githubreposervice.model.github;
+package pl.rafzab.githubreposervice.client.git.github.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
