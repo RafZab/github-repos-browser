@@ -4,12 +4,11 @@ import pl.rafzab.githubreposervice.client.git.GitClient;
 import pl.rafzab.githubreposervice.client.git.GitFilter;
 import pl.rafzab.githubreposervice.client.git.github.model.Branch;
 import pl.rafzab.githubreposervice.client.git.github.model.Repository;
+import pl.rafzab.githubreposervice.config.http.RestClient;
 import pl.rafzab.githubreposervice.config.mapper.Mapper;
 import pl.rafzab.githubreposervice.model.RepositoryDTO;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
@@ -20,12 +19,6 @@ import java.util.Map;
 public class GitHubClient implements GitClient {
     private static final String REPOS_URL = "https://api.github.com/users/%s/repos";
     private static final String BRANCHES_URL = "https://api.github.com/repos/%s/%s/branches";
-
-    private final HttpClient httpClient;
-
-    public GitHubClient() {
-        this.httpClient = HttpClient.newBuilder().build();
-    }
 
     @Override
     public List<RepositoryDTO> getRepositoriesByUsername(String username, GitFilter filter) {
@@ -64,7 +57,7 @@ public class GitHubClient implements GitClient {
 
     private String sendRequest(String url) {
         HttpRequest request = prepareRequest(url);
-        HttpResponse<String> response = trySendRequest(request);
+        HttpResponse<String> response = RestClient.trySendRequest(request);
 
         //TODO: CHECKING STATUS
 
@@ -76,13 +69,5 @@ public class GitHubClient implements GitClient {
                 .uri(URI.create(url))
                 .header("Accept", "application/vnd.github+json")
                 .build();
-    }
-
-    private HttpResponse<String> trySendRequest(HttpRequest request) {
-        try {
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
