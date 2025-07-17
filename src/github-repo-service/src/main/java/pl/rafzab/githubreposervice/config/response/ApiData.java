@@ -4,14 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class ApiData<T> {
-
     private final String message;
-
-    private T data;
-
-    public ApiData(String message) {
-        this.message = message;
-    }
+    private final T data;
 
     public ApiData(String message, T data) {
         this.message = message;

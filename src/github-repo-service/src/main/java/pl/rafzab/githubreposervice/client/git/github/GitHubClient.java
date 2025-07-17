@@ -3,9 +3,15 @@ package pl.rafzab.githubreposervice.client.git.github;
 import pl.rafzab.githubreposervice.client.git.GitClient;
 import pl.rafzab.githubreposervice.client.git.GitFilter;
 import pl.rafzab.githubreposervice.client.git.github.model.Branch;
+import pl.rafzab.githubreposervice.client.git.github.model.GitHubError;
 import pl.rafzab.githubreposervice.client.git.github.model.Repository;
 import pl.rafzab.githubreposervice.config.http.RestClient;
 import pl.rafzab.githubreposervice.config.mapper.Mapper;
+import pl.rafzab.githubreposervice.exception.base.BadRequestException;
+import pl.rafzab.githubreposervice.exception.base.BaseException;
+import pl.rafzab.githubreposervice.exception.base.ForbiddenException;
+import pl.rafzab.githubreposervice.exception.base.NotFoundException;
+import pl.rafzab.githubreposervice.exception.http.HttpClientUnknownException;
 import pl.rafzab.githubreposervice.model.RepositoryDTO;
 
 import java.net.URI;
@@ -59,9 +65,11 @@ public class GitHubClient implements GitClient {
         HttpRequest request = prepareRequest(url);
         HttpResponse<String> response = RestClient.trySendRequest(request);
 
-        //TODO: CHECKING STATUS
-
-        return response.body();
+        int statusCode = response.statusCode();
+        if (statusCode == 200) {
+            return response.body();
+        }
+        throw prepareRequestException(statusCode, response.body());
     }
 
     private HttpRequest prepareRequest(String url) {
@@ -69,5 +77,17 @@ public class GitHubClient implements GitClient {
                 .uri(URI.create(url))
                 .header("Accept", "application/vnd.github+json")
                 .build();
+    }
+
+    private BaseException prepareRequestException(int statusCode, String bodyJsonAsString) {
+        GitHubError error = Mapper.mapTo(bodyJsonAsString, GitHubError.class);
+
+        String errorMessage = error.message() + " " + error.documentationUrl();
+        return switch (statusCode) {
+            case 400 -> new BadRequestException(errorMessage);
+            case 401, 403 -> new ForbiddenException(errorMessage);
+            case 404 -> new NotFoundException(errorMessage);
+            default -> new HttpClientUnknownException(errorMessage);
+        };
     }
 }

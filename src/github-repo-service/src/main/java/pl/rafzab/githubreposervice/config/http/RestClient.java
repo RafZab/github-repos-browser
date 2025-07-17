@@ -1,5 +1,7 @@
 package pl.rafzab.githubreposervice.config.http;
 
+import pl.rafzab.githubreposervice.exception.http.HttpClientSenderException;
+
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -10,7 +12,7 @@ public class RestClient {
         try (HttpClient httpClient = HttpClient.newBuilder().build()) {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new HttpClientSenderException(e.getMessage());
         }
     }
 }

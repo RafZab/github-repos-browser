@@ -2,6 +2,7 @@ package pl.rafzab.githubreposervice.config.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pl.rafzab.githubreposervice.exception.mapper.MappingException;
 
 public class Mapper {
     public static <T> T mapTo(Object source, Class<T> targetType) {
@@ -13,7 +14,7 @@ public class Mapper {
 
             return objectMapper.readValue(jsonString, targetType);
         } catch (Exception e) {
-            throw new RuntimeException("JSON to object mapping error: " + targetType.getSimpleName(), e);
+            throw new MappingException(e.getMessage(), targetType.getSimpleName());
         }
     }
 
@@ -27,7 +28,7 @@ public class Mapper {
 
             return objectMapper.readValue(jsonString, typeReference);
         } catch (Exception e) {
-            throw new RuntimeException("JSON to object mapping error (TypeReference): " + typeReference.getType(), e);
+            throw new MappingException(e.getMessage(), typeReference.getType());
         }
     }
 }
