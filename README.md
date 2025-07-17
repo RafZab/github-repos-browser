@@ -44,7 +44,49 @@ documentation.
 
 ## Installation and start-up
 
-TODO Installation and start-up
+### Prerequisites
+
+- **Java 21** lub latest
+- **Maven 3.8+**
+- Internet access (the application integrates with the GitHub API)
+
+
+### Step 1: Cloning a repository
+
+```bash
+git clone https://github.com/RafZab/github-repos-browser.git
+cd github-repos-browser
+```
+
+
+### Step 2: Building the project
+
+```bash
+mvn clean install
+```
+
+
+### Step 3: Running the application
+
+```bash
+mvn spring-boot:run
+```
+
+The application listens on port **8080** by default.
+
+### Step 4: Functional check
+
+Once running, test the application by sending an HTTP request, such as using `curl`:
+
+```bash
+curl http://localhost:8080/api/v1/users/RafZab/repositories
+```
+
+Or open in your browser:
+
+```
+http://localhost:8080/api/v1/users/RafZab/repositories
+```
 
 ---
 
