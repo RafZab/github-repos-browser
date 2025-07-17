@@ -6,6 +6,7 @@ import pl.rafzab.githubreposervice.client.git.github.model.Branch;
 import pl.rafzab.githubreposervice.client.git.github.model.GitHubError;
 import pl.rafzab.githubreposervice.client.git.github.model.Repository;
 import pl.rafzab.githubreposervice.config.http.RestClient;
+import pl.rafzab.githubreposervice.config.logger.Logger;
 import pl.rafzab.githubreposervice.config.mapper.Mapper;
 import pl.rafzab.githubreposervice.exception.base.BadRequestException;
 import pl.rafzab.githubreposervice.exception.base.BaseException;
@@ -28,8 +29,9 @@ public class GitHubClient implements GitClient {
 
     @Override
     public List<RepositoryDTO> getRepositoriesByUsername(String username, GitFilter filter) {
-        Repository[] repos = getRepos(username);
+        Logger.info("get repositories for username {} in github", username);
 
+        Repository[] repos = getRepos(username);
         List<Repository> filteredRepos = filterRepositories(repos, filter);
         Map<Repository, Branch[]> branchesMap = getBranchesByRepos(filteredRepos);
 
@@ -39,12 +41,14 @@ public class GitHubClient implements GitClient {
     }
 
     private Repository[] getRepos(String username) {
+        Logger.debug("get github repositories for user {}", username);
         String url = REPOS_URL.formatted(username);
         String bodyJsonAsString = sendRequest(url);
         return Mapper.mapTo(bodyJsonAsString, Repository[].class);
     }
 
     private List<Repository> filterRepositories(Repository[] repos, GitFilter filter) {
+        Logger.debug("filter github repository {}", filter);
         GitHubRepoPredicateBuilder predicateBuilder = new GitHubRepoPredicateBuilder(filter);
         return Arrays.stream(repos).filter(predicateBuilder.createRepoPredicate()).toList();
     }
@@ -52,6 +56,7 @@ public class GitHubClient implements GitClient {
     private Map<Repository, Branch[]> getBranchesByRepos(List<Repository> repositories) {
         Map<Repository, Branch[]> branchesMap = new HashMap<>();
         for (var repo : repositories) {
+            Logger.debug("get branches for repository {}", repo.name());
             String url = BRANCHES_URL.formatted(repo.owner().login(), repo.name());
             String bodyJsonAsString = sendRequest(url);
 
@@ -73,6 +78,7 @@ public class GitHubClient implements GitClient {
     }
 
     private HttpRequest prepareRequest(String url) {
+        Logger.debug("prepare request to {}", url);
         return HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Accept", "application/vnd.github+json")
@@ -80,6 +86,7 @@ public class GitHubClient implements GitClient {
     }
 
     private BaseException prepareRequestException(int statusCode, String bodyJsonAsString) {
+        Logger.debug("github api exception with status {}", statusCode);
         GitHubError error = Mapper.mapTo(bodyJsonAsString, GitHubError.class);
 
         String errorMessage = error.message() + " " + error.documentationUrl();
@@ -87,7 +94,10 @@ public class GitHubClient implements GitClient {
             case 400 -> new BadRequestException(errorMessage);
             case 401, 403 -> new ForbiddenException(errorMessage);
             case 404 -> new NotFoundException(errorMessage);
-            default -> new HttpClientUnknownException(errorMessage);
+            default -> {
+                Logger.warn("github unknown api exception with status {}", statusCode);
+                yield new HttpClientUnknownException(errorMessage);
+            }
         };
     }
 }

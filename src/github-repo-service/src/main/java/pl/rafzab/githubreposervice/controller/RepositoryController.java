@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.rafzab.githubreposervice.config.logger.Logger;
 import pl.rafzab.githubreposervice.config.response.ApiData;
 import pl.rafzab.githubreposervice.config.response.ResponseMaker;
 import pl.rafzab.githubreposervice.model.RepositoryDTO;
@@ -23,6 +24,7 @@ public class RepositoryController {
 
     @GetMapping
     public ResponseEntity<ApiData<Collection<RepositoryDTO>>> getRepositories(@PathVariable String username) {
+        Logger.info("get repositories for user {}", username);
         var repositories = repositoryService.getUserNonForkRepositories(username);
         return ResponseMaker.ok(repositories);
     }

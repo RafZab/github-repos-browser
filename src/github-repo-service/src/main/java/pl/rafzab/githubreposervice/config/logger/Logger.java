@@ -7,20 +7,19 @@ import java.util.Arrays;
 @Slf4j
 public class Logger {
 
-    public static void info(String message, Object... args) {
-        log.info(
-                templateLogMessage(message), args
-        );
-    }
-
     public static void debug(String message, Object... args) {
         log.debug(
                 templateLogMessage(message), args
         );
     }
 
-    public static void warn(String message, Object... args) {
+    public static void info(String message, Object... args) {
+        log.info(
+                templateLogMessage(message), args
+        );
+    }
 
+    public static void warn(String message, Object... args) {
         log.warn(
                 templateLogMessage(message), args
         );

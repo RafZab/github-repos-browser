@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import pl.rafzab.githubreposervice.client.git.GitClient;
 import pl.rafzab.githubreposervice.client.git.GitFilter;
 import pl.rafzab.githubreposervice.client.git.GitType;
+import pl.rafzab.githubreposervice.config.logger.Logger;
 import pl.rafzab.githubreposervice.exception.base.BadRequestException;
 import pl.rafzab.githubreposervice.model.RepositoryDTO;
 
@@ -24,6 +25,7 @@ public class RepositoryService {
     }
 
     private void validUsername(String username) {
+        Logger.debug("valid username {}", username);
         if (username == null || username.trim().isEmpty()) {
             throw new BadRequestException("Username is null or empty");
         }
