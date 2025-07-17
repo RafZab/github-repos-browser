@@ -5,14 +5,14 @@ import pl.rafzab.githubreposervice.client.git.github.model.Branch;
 import pl.rafzab.githubreposervice.client.git.github.model.Repository;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 public class RepositoryDTO {
     private String repositoryName;
     private String ownerLogin;
-    private Collection<BranchDTO> branches;
+    private List<BranchDTO> branches;
 
     public static RepositoryDTO mapFrom(Repository repository, Branch[] branches) {
         RepositoryDTO repositoryDTO = new RepositoryDTO();

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: github-repo-service
+
+api:
+  version: v1
