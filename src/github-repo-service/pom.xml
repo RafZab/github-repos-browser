@@ -10,7 +10,7 @@
     </parent>
     <groupId>pl.rafzab</groupId>
     <artifactId>github-repo-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>github-repo-service</name>
     <description>github-repo-service</description>
     <url/>
